@@ -73,37 +73,37 @@ func parse_data(data_lines *bufio.Scanner, id int) email {
 	for data_lines.Scan() {
 		data.ID = id
 		if strings.Contains(data_lines.Text(), "Message-ID:") {
-			data.Message_ID = data_lines.Text()[11:len(data_lines.Text())]
+			data.Message_ID = data_lines.Text()[11:]
 		} else if strings.Contains(data_lines.Text(), "Date:") {
-			data.Date = data_lines.Text()[5:len(data_lines.Text())]
+			data.Date = data_lines.Text()[5:]
 		} else if strings.Contains(data_lines.Text(), "From:") {
-			data.From = data_lines.Text()[5:len(data_lines.Text())]
+			data.From = data_lines.Text()[7:]
 		} else if strings.Contains(data_lines.Text(), "To:") {
-			data.To = data_lines.Text()[3:len(data_lines.Text())]
+			data.To = data_lines.Text()[4:]
 		} else if strings.Contains(data_lines.Text(), "Subject:") {
-			data.Subject = data_lines.Text()[8:len(data_lines.Text())]
+			data.Subject = data_lines.Text()[8:]
 		} else if strings.Contains(data_lines.Text(), "Cc:") {
-			data.Cc = data_lines.Text()[3:len(data_lines.Text())]
+			data.Cc = data_lines.Text()[3:]
 		} else if strings.Contains(data_lines.Text(), "Mime-Version:") {
-			data.Mime_Version = data_lines.Text()[9:len(data_lines.Text())]
+			data.Mime_Version = data_lines.Text()[9:]
 		} else if strings.Contains(data_lines.Text(), "Content-Type:") {
-			data.Content_Type = data_lines.Text()[9:len(data_lines.Text())]
+			data.Content_Type = data_lines.Text()[9:]
 		} else if strings.Contains(data_lines.Text(), "Content-Transfer-Encoding:") {
-			data.Content_Transfer_Encoding = data_lines.Text()[9:len(data_lines.Text())]
+			data.Content_Transfer_Encoding = data_lines.Text()[9:]
 		} else if strings.Contains(data_lines.Text(), "X-From:") {
-			data.X_From = data_lines.Text()[9:len(data_lines.Text())]
+			data.X_From = data_lines.Text()[9:]
 		} else if strings.Contains(data_lines.Text(), "X-To:") {
-			data.X_To = data_lines.Text()[9:len(data_lines.Text())]
+			data.X_To = data_lines.Text()[9:]
 		} else if strings.Contains(data_lines.Text(), "X-cc:") {
-			data.X_cc = data_lines.Text()[6:len(data_lines.Text())]
+			data.X_cc = data_lines.Text()[6:]
 		} else if strings.Contains(data_lines.Text(), "X-bcc:") {
-			data.X_bcc = data_lines.Text()[6:len(data_lines.Text())]
+			data.X_bcc = data_lines.Text()[6:]
 		} else if strings.Contains(data_lines.Text(), "X-Folder:") {
-			data.X_Folder = data_lines.Text()[9:len(data_lines.Text())]
+			data.X_Folder = data_lines.Text()[9:]
 		} else if strings.Contains(data_lines.Text(), "X-Origin:") {
-			data.X_Origin = data_lines.Text()[9:len(data_lines.Text())]
+			data.X_Origin = data_lines.Text()[9:]
 		} else if strings.Contains(data_lines.Text(), "X-FileName:") {
-			data.X_FileName = data_lines.Text()[9:len(data_lines.Text())]
+			data.X_FileName = data_lines.Text()[9:]
 		} else {
 			data.Body = data.Body + data_lines.Text()
 		}
@@ -120,7 +120,7 @@ func index_data(data email) {
 	//zinc_host := "https://playground.dev.zincsearch.com"
 	zinc_url := zinc_host + "/api/" + index + "/_doc"
 	jsonData, _ := json.MarshalIndent(data, "", "   ") //esta línea muestra los resultados tipo JSON de forma ordenada(https://gosamples.dev/pretty-print-json/)
-	jSonFinal = append(jSonFinal, string(jsonData))	
+	jSonFinal = append(jSonFinal, string(jsonData))
 	// fmt.Println(string(jsonData))
 	// time.Sleep(2 * time.Second)
 	req, err := http.NewRequest("POST", zinc_url, bytes.NewBuffer(jsonData))
@@ -169,6 +169,7 @@ func JSONfinal(datos []string) {
 func main() {
 	path := "c:/Users/jelm4/Downloads/enron_mail_20110402/enron_mail_20110402/maildir2/"
 	contador := 0 //esta variable es para crear el ID en el archivo JSON
+	fmt.Print("Indexando...")
 	user_list := list_all_folders(path)
 	for _, user := range user_list {
 		folders := list_all_folders(path + user)
