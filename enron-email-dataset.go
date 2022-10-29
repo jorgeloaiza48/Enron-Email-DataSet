@@ -120,8 +120,7 @@ func index_data(data email) {
 	//zinc_host := "https://playground.dev.zincsearch.com"
 	zinc_url := zinc_host + "/api/" + index + "/_doc"
 	jsonData, _ := json.MarshalIndent(data, "", "   ") //esta línea muestra los resultados tipo JSON de forma ordenada(https://gosamples.dev/pretty-print-json/)
-	jSonFinal = append(jSonFinal, string(jsonData))
-	//fmt.Print("Estos es la variable datos ----->> ", jSonFinal)
+	jSonFinal = append(jSonFinal, string(jsonData))	
 	// fmt.Println(string(jsonData))
 	// time.Sleep(2 * time.Second)
 	req, err := http.NewRequest("POST", zinc_url, bytes.NewBuffer(jsonData))
