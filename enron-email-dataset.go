@@ -169,7 +169,7 @@ func JSONfinal(datos []string) {
 func main() {
 	path := "c:/Users/jelm4/Downloads/enron_mail_20110402/enron_mail_20110402/maildir2/"
 	contador := 0 //esta variable es para crear el ID en el archivo JSON
-	fmt.Print("Indexando...")
+	fmt.Println("Indexando...")
 	user_list := list_all_folders(path)
 	for _, user := range user_list {
 		folders := list_all_folders(path + user)
