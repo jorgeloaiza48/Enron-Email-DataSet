@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"	
+	"fmt"
 
 	//"reflect"
 
@@ -19,7 +19,7 @@ import (
 )
 
 type email struct {
-	ID 						  int 	 `json:"ID"`
+	ID                        int    `json:"ID"`
 	Message_ID                string `json:"Message-ID"`
 	Date                      string `json:"Date"`
 	From                      string `json:"from"`
@@ -120,7 +120,6 @@ func index_data(data email) {
 	//zinc_host := "https://playground.dev.zincsearch.com"
 	zinc_url := zinc_host + "/api/" + index + "/_doc"
 	jsonData, _ := json.MarshalIndent(data, "", "   ") //esta línea muestra los resultados tipo JSON de forma ordenada(https://gosamples.dev/pretty-print-json/)
-	//fmt.Print("Tipo de dato de jsondata ---->>", reflect.TypeOf(jsonData))
 	jSonFinal = append(jSonFinal, string(jsonData))
 	//fmt.Print("Estos es la variable datos ----->> ", jSonFinal)
 	// fmt.Println(string(jsonData))
@@ -171,7 +170,7 @@ func JSONfinal(datos []string) {
 func main() {
 	path := "c:/Users/jelm4/Downloads/enron_mail_20110402/enron_mail_20110402/maildir2/"
 	contador := 0 //esta variable es para crear el ID en el archivo JSON
-	user_list := list_all_folders(path)	
+	user_list := list_all_folders(path)
 	for _, user := range user_list {
 		folders := list_all_folders(path + user)
 		for _, folder := range folders {
