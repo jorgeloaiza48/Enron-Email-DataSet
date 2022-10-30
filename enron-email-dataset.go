@@ -7,7 +7,12 @@ import (
 	"encoding/json"
 	"fmt"
 
+	//"net/http/pprof"
+	//"github.com/felixge/fgprof"
+	//"github.com/pkg/profile"
 	//"reflect"
+	"runtime"
+	"runtime/pprof"
 
 	//"time"
 	//"io"
@@ -18,6 +23,7 @@ import (
 	"strings"
 )
 
+// Estructura del json que contendrá cada correo.
 type email struct {
 	ID                        int    `json:"ID"`
 	Message_ID                string `json:"Message-ID"`
@@ -67,8 +73,9 @@ func list_files(folder_name string) []string {
 	}
 	return files_names
 }
-func parse_data(data_lines *bufio.Scanner, id int) email {
 
+// Esta función volca los datos en forma de JSON.
+func parse_data(data_lines *bufio.Scanner, id int) email {
 	var data email
 	for data_lines.Scan() {
 		data.ID = id
@@ -110,6 +117,8 @@ func parse_data(data_lines *bufio.Scanner, id int) email {
 	}
 	return data
 }
+
+// Esta función realiza una petición y envía los datos.
 func index_data(data email) {
 	user := "admin"
 	password := "Complexpass#123"
@@ -121,8 +130,6 @@ func index_data(data email) {
 	zinc_url := zinc_host + "/api/" + index + "/_doc"
 	jsonData, _ := json.MarshalIndent(data, "", "   ") //esta línea muestra los resultados tipo JSON de forma ordenada(https://gosamples.dev/pretty-print-json/)
 	jSonFinal = append(jSonFinal, string(jsonData))
-	// fmt.Println(string(jsonData))
-	// time.Sleep(2 * time.Second)
 	req, err := http.NewRequest("POST", zinc_url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		log.Fatal("Error reading request. ", err)
@@ -164,9 +171,18 @@ func JSONfinal(datos []string) {
 		}
 	}
 	file.Close()
-	fmt.Println("File written successfully")
+	fmt.Println("JSON File successfully created")
 }
 func main() {
+	////Prceso de rendimiento de la aplicación/////////////
+	cpu, err := os.Create("cpu.prof")
+	if err != nil {
+		log.Fatal(err)
+	}
+	pprof.StartCPUProfile(cpu)
+	defer pprof.StopCPUProfile()
+	////////Fin prceso de rendimiento de la aplicación/////////
+
 	path := "c:/Users/jelm4/Downloads/enron_mail_20110402/enron_mail_20110402/maildir2/"
 	contador := 0 //esta variable es para crear el ID en el archivo JSON
 	fmt.Println("Indexando...")
@@ -178,24 +194,28 @@ func main() {
 			for _, mail_file := range mail_files {
 				//fmt.Println("Indexing: " + user + "/" + folder + "/" + mail_file)
 				sys_file, _ := os.Open(path + user + "/" + folder + "/" + mail_file) //abre el archivo
-				lines := bufio.NewScanner(sys_file)                                  //Lee el archivo líea por línea (https://golangdocs.com/reading-files-in-golang)
-				// var lineas []string
-				// for lines.Scan() { //https://thedeveloperblog.com/bufio
-				// 	//lineas = append(lineas, lines.Text())
-				// 	fmt.Println("Líneas ---------->>> ",lines.Text())
-				// }
-				contador++ //cada vez que se invoque la función "parse_data" esta variable se pasa con un incremento de 1 para crear el ID de cada objeto en el JSON.
+				lines := bufio.NewScanner(sys_file)                                  //Lee el archivo línea por línea (https://golangdocs.com/reading-files-in-golang)
+				contador++                                                           //cada vez que se invoque la función "parse_data" esta variable se pasa con un incremento de 1 para crear el ID de cada objeto en el JSON.
 				index_data(parse_data(lines, contador))
 				//defer sys_file.Close() //cierra el archivo
 			}
 		}
 	}
 	JSONfinal(jSonFinal)
-	// fmt.Print("Longitud del array jSonFinal -------->>>  ", len(jSonFinal))
-	// fmt.Print("Tipo de dato de jsonFinal ---->>  ", reflect.TypeOf(jSonFinal))
-	//fmt.Print(list_all_folders(path))
-	//fmt.Println(list_files(path))
+	fmt.Println("Indexing finished!!!!")
+
+	////Proceso de rendimiento de la aplicación/////////////
+	runtime.GC()
+	mem, err := os.Create("memory.prof")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer mem.Close()
+	if err := pprof.WriteHeapProfile(mem); err != nil {
+		log.Fatal(err)
+	}
+	////Fin proceso de rendimiento de la aplicación/////////////
 
 }
 
-//
+//go tool pprof -http=:8080 cpu.prof
