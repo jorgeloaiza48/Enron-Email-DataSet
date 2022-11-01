@@ -160,7 +160,7 @@ func JSONfinal(datos []string) {
 		log.Fatalf("failed creating file: %s", err)
 	}
 	file.WriteString("{")
-	file.WriteString(" Enron-email : [") //investigar como colocar la palabra con las comillas.
+	file.WriteString(`"Enron-email"` + ": [") 
 	for index, _ := range datos {
 		file.WriteString(datos[index])
 		if index == len(datos)-1 {
