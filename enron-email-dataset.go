@@ -84,7 +84,7 @@ func parse_data(data_lines *bufio.Scanner, id int) email {
 		} else if strings.Contains(data_lines.Text(), "Date:") {
 			data.Date = data_lines.Text()[5:]
 		} else if strings.Contains(data_lines.Text(), "From:") {
-			data.From = data_lines.Text()[7:]
+			data.From = data_lines.Text()[6:]
 		} else if strings.Contains(data_lines.Text(), "To:") {
 			data.To = data_lines.Text()[4:]
 		} else if strings.Contains(data_lines.Text(), "Subject:") {
@@ -160,7 +160,7 @@ func JSONfinal(datos []string) {
 		log.Fatalf("failed creating file: %s", err)
 	}
 	file.WriteString("{")
-	file.WriteString(`"Enron-email"` + ": [") 
+	file.WriteString(`"Enron-email"` + ": [")
 	for index, _ := range datos {
 		file.WriteString(datos[index])
 		if index == len(datos)-1 {
@@ -183,7 +183,7 @@ func main() {
 	defer pprof.StopCPUProfile()
 	////////Fin prceso de rendimiento de la aplicación/////////
 
-	path := "c:/Users/jelm4/Downloads/enron_mail_20110402/enron_mail_20110402/maildir2/"
+	path := "c:/Users/jelm4/Downloads/enron_mail_20110402/enron_mail_20110402/maildir/"
 	contador := 0 //esta variable es para crear el ID en el archivo JSON
 	fmt.Println("Indexando...")
 	user_list := list_all_folders(path)
@@ -197,7 +197,7 @@ func main() {
 				lines := bufio.NewScanner(sys_file)                                  //Lee el archivo línea por línea (https://golangdocs.com/reading-files-in-golang)
 				contador++                                                           //cada vez que se invoque la función "parse_data" esta variable se pasa con un incremento de 1 para crear el ID de cada objeto en el JSON.
 				index_data(parse_data(lines, contador))
-				//defer sys_file.Close() //cierra el archivo
+				sys_file.Close() //cierra el archivo
 			}
 		}
 	}
@@ -218,4 +218,4 @@ func main() {
 
 }
 
-//go tool pprof -http=:8080 cpu.prof
+//go tool pprof -http=:8020 cpu.prof
